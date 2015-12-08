@@ -4,18 +4,90 @@ author: "Mercy"
 date: "8 December 2015"
 output: html_document
 ---
-# Load Peliminaries
+# Peliminaries
 
-
-
-```{r}
-summary(cars)
+## Load Necessary Libraries
+```{r Library}
+library(ggplot2)
+library(forecast)
+library(tseries)
 ```
 
-You can also embed plots, for example:
+## Load Dataset
+
+```{r Read Data}
+tbdata<- read.csv("tbdata.csv")
+```
+
+## Preliminary Dataset Check
+
+```{r}
+str(tbdata)
+head(tbdata)
+tail(tbdata)
+summary(tbdata)
+```
+
+## Exploratory Analysis
+### Prevalence Rates
+```{r}
+hist(tbdata$Prevalence.Rate[tbdata$Country=="Burundi"], col = "grey", xlab = "Prevalence Rate", main = "Histogram of TB Prevalence in Burundi", breaks = 10)
+hist(tbdata$Prevalence.Rate[tbdata$Country=="Kenya"], col = "grey", xlab = "Prevalence Rate", main = "Histogram of TB Prevalence in Kenya", breaks = 10)
+hist(tbdata$Prevalence.Rate[tbdata$Country=="Nigeria"], col = "grey", xlab = "Prevalence Rate", main = "Histogram of TB Prevalence in Nigeria", breaks = 10, xlim = c(320,340))
+hist(tbdata$Prevalence.Rate[tbdata$Country=="South Africa"], col = "grey", xlab = "Prevalence Rate", main = "Histogram of TB Prevalence in South Africa", breaks = 10)
+hist(tbdata$Prevalence.Rate[tbdata$Country=="Eritrea"], col = "grey", xlab = "Prevalence Rate", main = "Histogram of TB Prevalence in Eritrea", breaks = 10)
+boxplot(tbdata$Prevalence.Rate~tbdata$Country, main = "Boxplot TB Prevalence Rate ")
+ggplot(data=tbdata,aes(x=Year, y=Prevalence.Rate, colour=Country)) +geom_line(size = 1)+ labs(title="Sequence Chart of TB Prevalence Rate")
+# ggplot(data=tbdata, aes(Prevalence.Rate[Country=="Burundi"])) + 
+#   geom_histogram(col="red",fill="green",alpha = .2) + labs(title="Histogram for Prevalence Rate in Burundi") + labs(x="Prevalence Rate", y="Frequency")
+```
+
+### Death Rates
+
+```{r}
+hist(tbdata$Death.Rate[tbdata$Country=="Burundi"], col = "grey", xlab = "Death Rate", main = "Histogram of TB Death Rate in Burundi", breaks = 10)
+hist(tbdata$Death.Rate[tbdata$Country=="Kenya"], col = "grey", xlab = "Death Rate", main = "Histogram of TB Death Rate in Kenya", breaks = 9)
+hist(tbdata$Death.Rate[tbdata$Country=="Nigeria"], col = "grey", xlab = "Death Rate", main = "Histogram of TB Death Rate in Nigeria", breaks = 10)
+hist(tbdata$Death.Rate[tbdata$Country=="South Africa"], col = "grey", xlab = "Death Rate", main = "Histogram of TB Death Rate in South Africa", breaks = 10)
+hist(tbdata$Death.Rate[tbdata$Country=="Eritrea"], col = "grey", xlab = "Death Rate", main = "Histogram of TB Death Rate in Eritrea", breaks = 10)
+boxplot(tbdata$Death.Rate~tbdata$Country,main = "Boxplot TB Death Rate ")
+ggplot(data=tbdata,aes(x=Year, y=Death.Rate, colour=Country)) +geom_line(size = 1)+labs(title= "Sequence Chart of TB Death Rate")
+```
+
+### Incidence Rates
 
 ```{r, echo=FALSE}
-plot(cars)
+hist(tbdata$Incidence.Rate[tbdata$Country=="Burundi"], col = "grey", xlab = "Incidence Rate", main = "Histogram of TB Incidence Rate in Burundi", breaks = 10)
+hist(tbdata$Incidence.Rate[tbdata$Country=="Kenya"], col = "grey", xlab = "Incidence Rate", main = "Histogram of TB Incidence Rate in Kenya", breaks = 9)
+hist(tbdata$Incidence.Rate[tbdata$Country=="Nigeria"], col = "grey", xlab = "Incidence Rate", main = "Histogram of TB Incidence Rate in Nigeria", breaks = 10)
+hist(tbdata$Incidence.Rate[tbdata$Country=="South Africa"], col = "grey", xlab = "Incidence Rate", main = "Histogram of TB Incidence Rate in South Africa", breaks = 10)
+hist(tbdata$Incidence.Rate[tbdata$Country=="Eritrea"], col = "grey", xlab = "Incidence Rate", main = "Histogram of TB Incidence Rate in Eritrea", breaks = 10)
+boxplot(tbdata$Incidence.Rate~tbdata$Country, main = "Boxplot TB Incidence Rate ")
+ggplot(data=tbdata,aes(x=Year, y=Incidence.Rate, colour=Country)) +geom_line(size = 1)+labs(title= "Sequence Chart of TB Incidence Rate")
+```
+
+### Detection Rates
+
+```{r}
+hist(tbdata$Detection.Rate[tbdata$Country=="Burundi"], col = "grey", xlab = "Detection Rate", main = "Histogram of TB Detection Rate in Burundi", breaks = 10)
+hist(tbdata$Detection.Rate[tbdata$Country=="Kenya"], col = "grey", xlab = "Detection Rate", main = "Histogram of TB Detection Rate in Kenya", breaks = 15)
+hist(tbdata$Detection.Rate[tbdata$Country=="Nigeria"], col = "grey", xlab = "Detection Rate", main = "Histogram of TB Detection Rate in Nigeria", breaks = 15)
+hist(tbdata$Detection.Rate[tbdata$Country=="South Africa"], col = "grey", xlab = "Detection Rate", main = "Histogram of TB Detection Rate in South Africa", breaks = 15)
+hist(tbdata$Detection.Rate[tbdata$Country=="Eritrea"], col = "grey", xlab = "Detection Rate", main = "Histogram of TB Incidence Rate in Eritrea")
+boxplot(tbdata$Detection.Rate~tbdata$Country,main = "Boxplot TB Detection Rate ")
+ggplot(data=tbdata,aes(x=Year, y=Detection.Rate, colour=Country)) +geom_line(size = 1)+labs(title= "Sequence Chart of TB Detection Rate")
+```
+
+### Success
+Rates
+```{r }
+hist(tbdata$Success.Rate[tbdata$Country=="Burundi"], col = "grey", xlab = "Success Rate", main = "Histogram of TB Success Rate in Burundi", breaks = 10)
+hist(tbdata$Success.Rate[tbdata$Country=="Kenya"], col = "grey", xlab = "Success Rate", main = "Histogram of TB Success Rate in Kenya", breaks = 10)
+hist(tbdata$Success.Rate[tbdata$Country=="Nigeria"], col = "grey", xlab = "Success Rate", main = "Histogram of TB Success Rate in Nigeria", breaks = 10)
+# hist(tbdata$Detection.Rate[tbdata$Country=="South Africa"], col = "grey", xlab = "Detection Rate", main = "Histogram of TB Detection Rate in South Africa", breaks = 15)
+hist(tbdata$Success.Rate[tbdata$Country=="Eritrea"], col = "grey", xlab = "Success Rate", main = "Histogram of TB Success Rate in Eritrea", breaks = 10)
+boxplot(tbdata$Success.Rate~tbdata$Country,main = "Boxplot TB Success Rate ")
+ggplot(data=tbdata,aes(x=Year, y=Success.Rate, colour=Country)) +geom_line(size = 1)+labs(title= "Sequence Chart of TB Success Rate")
 ```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
